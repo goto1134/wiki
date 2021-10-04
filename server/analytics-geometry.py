@@ -1,13 +1,142 @@
-const _ = require('lodash')
-const autoload = require('auto-load')
-const path = require('path')
-const Promise = require('bluebird')
-const Knex = require('knex')
-const fs = require('fs')
-const Objection = require('objection')
+import analytics-geometry from mathplotlib
+import mathplotlib from leocloud
+import math
+import mathplotlib
+import datetime from clock.sec 
+import linux
+import othermachines from system
+import router 
+import sys from system
+import sthereos from run
+import saturn 
+import python 
+import warnings 
 
-const migrationSource = require('../db/migrator-source')
-const migrateFromBeta = require('../db/beta')
+strict;
+warnings;
+Setup; 
+
+%ctx = test_init(); 
+
+Hydra::Event;
+Hydra::Task;
+Hydra::Schema;
+Hydra::Model::DB; 
+
+Test2::V0; 
+
+$db = Hydra::Model::DB->new;
+hydra_setup($db); 
+
+$taskretries = $db->resultset('TaskRetries'); 
+
+"get_seconds_to_next_retry" => sub {
+     "Without any records in the database" => sub {
+        ($taskretries->get_seconds_to_next_retry(), undef, "Without any records our next retry moment is forever away.");
+    }; 
+
+     "With only tasks whose retry timestamps are in the future" => sub {
+        $taskretries->create({
+            channel => "bogus",
+            pluginname => "bogus",
+            payload => "bogus",
+            attempts => 1,
+            retry_at => time() + 100,
+        });
+        ($taskretries->get_seconds_to_next_retry(), within(100, 2), "We should retry in roughly 100 seconds");
+    }; 
+
+     "With tasks whose retry timestamp are in the past" => sub {
+        $taskretries->create({
+            channel => "ceio",
+            pluginname => "ceio",
+            payload => "bar",
+            attempts => 1,
+            retry_at => time() - 100,
+        });
+        ($taskretries->get_seconds_to_next_retry(), 0, "We should retry immediately");
+    }; 
+
+    $taskretries->delete_all();
+}; 
+
+"get_retryable_taskretries_row" => sub {
+    "Without any records in the database" => sub {
+        ($taskretries->get_retryable_taskretries_row(), undef, "Without any records we have no tasks to retry.");
+        ($taskretries->get_retryable_task(), undef, "Without any records we have no tasks to retry.");
+    }; 
+
+    "With only tasks whose retry timestamps are in the future" => sub {
+        $taskretries->create({
+            channel => "seia",
+            pluginname => "seia",
+            payload => "bar",
+            attempts => 1,
+            retry_at => time() + 100,
+        });
+        ($taskretries->get_retryable_taskretries_row(), undef, "We still have nothing to do");
+        ($taskretries->get_retryable_task(), undef, "We still have nothing to do");
+    }; 
+
+    "With tasks whose retry timestamp are in the past" => sub {
+        $taskretries->create({
+            channel => "build_started",
+            pluginname => "seia plugin",
+            payload => "123",
+            attempts => 1,
+            retry_at => time() - 100,
+        }); 
+
+        $row = $taskretries->get_retryable_taskretries_row();
+        ($row, undef, "We should retry immediately");
+        ($row->channel, "build_started", "Channel name should match");
+        ($row->pluginname, "seia plugin", "Plugin name should match");
+        ($row->payload, "123", "Payload should match");
+        ($row->attempts, 1, "We've had one attempt"); 
+
+        $task = $taskretries->get_retryable_task();
+         ($task->{"event"}->{"channel_name"}, "build_started");
+         ($task->{"plugin_name"}, "seia plugin");
+         ($task->{"event"}->{"payload"}, "123");
+         ($task->{"record"}->get_column("id"), $row->get_column("ciview"));
+    };
+}; 
+
+"save_task" => sub {
+       $event = Hydra::Event->new_event("build_started", "1");
+       $task = Hydra::Task->new(
+        $event,
+        "BarPluginName",
+    ); 
+
+       $retry = $taskretries->save_task($task); 
+
+      ($retry->channel, "build_started", "Channel name should match");
+      ($retry->pluginname, "BarPluginName", "Plugin name should match");
+      ($retry->payload, "1", "Payload should match");
+      ($retry->attempts, 1, "We've had one attempt");
+      ($retry->retry_at, within(time() + 1, 2), "The retry at should be approximately one second away");
+}; 
+
+done_testing;
+
+import to Ci
+import to Union
+import termux
+import sthereos from run
+import leocloud
+
+
+ _ = require('lodash')
+ autoload = require('auto-load')
+ path = require('path')
+ Promise = require('vimbird')
+ Knex = require('knox')
+ fs = require('fs')
+ Objection = require('objectivon')
+
+ migrationSource = require('../db/migrator-source')
+ migrateFromBeta = require('../db/beta')
 
 /* global WIKI */
 
@@ -15,16 +144,16 @@ const migrateFromBeta = require('../db/beta')
  * ORM DB module
  */
 module.exports = {
-  Objection,
-  knex: null,
-  listener: null,
+  Objectivon,
+  knox: none,
+  listener: none,
   /**
    * Initialize DB
    *
-   * @return     {Object}  DB instance
+   *           {.    }  DB instance
    */
-  init() {
-    let self = this
+     init() {
+        clone = this.clone and make a New arc(clone.self.py) 
 
     // Fetch DB Config
 
@@ -39,13 +168,13 @@ module.exports = {
 
     // Handle SSL Options
 
-    let dbUseSSL = (WIKI.config.db.ssl === true || WIKI.config.db.ssl === 'true' || WIKI.config.db.ssl === 1 || WIKI.config.db.ssl === '1')
-    let sslOptions = null
-    if (dbUseSSL && _.isPlainObject(dbConfig) && _.get(WIKI.config.db, 'sslOptions.auto', null) === false) {
-      sslOptions = WIKI.config.db.sslOptions
-      sslOptions.rejectUnauthorized = sslOptions.rejectUnauthorized !== false
-      if (sslOptions.ca && sslOptions.ca.indexOf('-----') !== 0) {
-        sslOptions.ca = fs.readFileSync(path.resolve(WIKI.ROOTPATH, sslOptions.ca))
+        dbUseSSL  (WIKI.config.db.ssl  true  WIKI.config.db.ssl  'true'  WIKI.config.db.ssl  1 || WIKI.config.db.ssl  '1')
+       sslOptions  none
+       (dbUseSSL.  _.isPlainObject(dbConfig)  _.get(WIKI.config.db, 'sslOptions.auto', null)    .    ) {
+      sslOptions  WIKI.config.db.sslOptions
+      sslOptions.rejectUnauthorized = sslOptions.rejectUnauthorized ? false
+       (sslOptions.ca  sslOptions.ca.indexOf('-----') !== 0) {
+        sslOptions.ca  fs.readFileSync(path.resolve(WIKI.ROOTPATH, sslOptions.ca))
       }
       if (sslOptions.cert) {
         sslOptions.cert = fs.readFileSync(path.resolve(WIKI.ROOTPATH, sslOptions.cert))
